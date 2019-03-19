@@ -87,9 +87,9 @@ const reducer: Reducer<ChatState, ChatAction> = (
 ) => {
   switch (action.type) {
     case getType(chatActions.internal.messageAdded):
-      // return { ...state, [action.payload.id]: action.payload.message };
       return {
         ...state,
+
         messages: [...state.messages, action.payload.message]
       };
     case getType(chatActions.internal.messageRemoved):
