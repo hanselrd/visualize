@@ -1,6 +1,14 @@
+import time
+from flask import request
 from flask_socketio import emit
 from .. import socketio
 
-@socketio.on('text')
+id = 1
+
+@socketio.on('message_add')
 def text(message):
-    emit('message', {'msg': message})
+    global id
+    emit('message_add',
+         {'id': id, 'message': {'sid': request.sid, 'text': message, 'created': time.time()}},
+         broadcast=True)
+    id += 1
