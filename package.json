@@ -1,0 +1,36 @@
+{
+  "name": "visualize",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test:client": "cd client && npm test",
+    "test:server": "cd server && exit 0",
+    "test": "run-s test:*",
+    "lint:client": "cd client && npm run lint",
+    "lint:server": "cd server && black . --exclude venv --check",
+    "lint": "run-s lint:*",
+    "format:client": "cd client && npm run format",
+    "format:server": "cd server && black . --exclude venv",
+    "format": "run-s format:*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hanselrd/visualize.git"
+  },
+  "author": "Hansel De La Cruz",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/hanselrd/visualize/issues"
+  },
+  "homepage": "https://github.com/hanselrd/visualize#readme",
+  "dependencies": {
+    "husky": "^1.3.1",
+    "npm-run-all": "^4.1.5"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "run-s lint test"
+    }
+  }
+}
