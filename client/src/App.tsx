@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import './App.css';
 import { RootState } from './ducks';
 import { chatActions } from './ducks/chat';
+import { marketActions } from './ducks/market';
 
 type AppProps = ReturnType<typeof mapStateToProps> & typeof mapDispatchToProps;
 
@@ -11,6 +12,7 @@ const App: React.FC<AppProps> = props => {
 
   useEffect(() => {
     props.chatStart();
+    props.marketStart();
   }, []);
 
   const sendHandler = () => {
@@ -40,6 +42,7 @@ const App: React.FC<AppProps> = props => {
         <input type="text" value={text} onChange={inputHandler} />
         <button onClick={sendHandler}>Send</button>
       </div>
+      <div>{JSON.stringify(props.market)}</div>
     </React.Fragment>
   );
 };
@@ -49,7 +52,8 @@ const mapStateToProps = (state: RootState) => state;
 const mapDispatchToProps = {
   chatStart: chatActions.start,
   chatSendMessage: chatActions.sendMessage,
-  chatDeleteMessage: chatActions.deleteMessage
+  chatDeleteMessage: chatActions.deleteMessage,
+  marketStart: marketActions.start
 };
 
 export default connect(

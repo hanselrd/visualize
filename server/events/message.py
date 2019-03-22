@@ -3,16 +3,17 @@ from flask import request
 from flask_socketio import emit
 from main import socketio
 
-id = 1
+
+_id = 1
 
 
 @socketio.on("message_add")
 def message_add(message):
-    global id
+    global _id
     emit(
         "message_add",
         {
-            "id": id,
+            "id": _id,
             "message": {
                 "sid": request.sid,
                 "text": message,

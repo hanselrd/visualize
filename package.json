@@ -8,10 +8,10 @@
     "test:server": "cd server && exit 0",
     "test": "run-s test:*",
     "lint:client": "cd client && npm run lint",
-    "lint:server": "cd server && black . --exclude venv --check",
+    "lint:server": "cd server && venv/bin/black . --exclude venv --check",
     "lint": "run-s lint:*",
     "format:client": "cd client && npm run format",
-    "format:server": "cd server && black . --exclude venv",
+    "format:server": "cd server && venv/bin/black . --exclude venv",
     "format": "run-s format:*"
   },
   "repository": {

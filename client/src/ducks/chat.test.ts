@@ -14,7 +14,7 @@ it('start saga executes correctly', () => {
 });
 
 it('sendMessage saga executes correctly', () => {
-  const action = chatActions.sendMessage('test');
+  const action = chatActions.sendMessage('');
   const gen = chatSagas.sendMessage(action);
 
   expect(gen.next().value).toEqual(call([socket, socket.emit], 'message_add', action.payload));

@@ -10,7 +10,8 @@
     "object-literal-sort-keys": false,
     "jsx-no-lambda": false,
     "triple-equals": [true, "allow-null-check"],
-    "no-empty": false
+    "no-empty": false,
+    "no-bitwise": false
   },
   "rulesDirectory": []
 }
