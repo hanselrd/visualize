@@ -1,5 +1,5 @@
 import { call, put, take } from 'redux-saga/effects';
-import socket from '../core/socketio';
+import { chatSocket } from '../core/socketio';
 import { chatActions, chatSagas, chatServices } from './chat';
 
 it('start saga executes correctly', () => {
@@ -17,6 +17,6 @@ it('sendMessage saga executes correctly', () => {
   const action = chatActions.sendMessage('');
   const gen = chatSagas.sendMessage(action);
 
-  expect(gen.next().value).toEqual(call([socket, socket.emit], 'message_add', action.payload));
+  expect(gen.next().value).toEqual(call([chatSocket, chatSocket.emit], 'add', action.payload));
   expect(gen.next().done).toEqual(true);
 });

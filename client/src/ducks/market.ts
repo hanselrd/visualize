@@ -2,7 +2,7 @@ import { Reducer } from 'redux';
 import { eventChannel } from 'redux-saga';
 import { all, call, put, take, takeLatest } from 'redux-saga/effects';
 import { ActionType, createAction, getType } from 'typesafe-actions';
-import socket from '../core/socketio';
+import { marketSocket } from '../core/socketio';
 
 enum Trigger {
   NONE = 0,
@@ -22,7 +22,7 @@ interface IBookUpdate {
 interface IBook {
   deltas: IBookUpdate[];
   vwap: number;
-  total_volume: number;
+  totalVolume: number;
 }
 
 interface IMarketData {
@@ -33,7 +33,7 @@ interface IMarketData {
 
 export const marketActions = {
   internal: {
-    update: createAction('@@market/UPDATE', action => (md: IMarketData) => action(md))
+    update: createAction('@@market/UPDATE', action => (md: IMarketData[]) => action(md))
   },
   start: createAction('@@market/START', action => () => action())
 };
@@ -43,9 +43,9 @@ export type MarketAction = ActionType<typeof marketActions>;
 export const marketServices = {
   subscribe: () =>
     eventChannel(emit => {
-      socket.emit('market_subscribe');
+      // marketSocket.emit('subscribe');
 
-      socket.on('market_data', (md: IMarketData) => {
+      marketSocket.on('data', (md: IMarketData[]) => {
         emit(marketActions.internal.update(md));
       });
 
@@ -71,22 +71,37 @@ export type MarketState = Readonly<{ book: IBook }>;
 
 const reducer: Reducer<MarketState, MarketAction> = (
   state: MarketState = {
-    book: { deltas: [], vwap: 0, total_volume: 0 }
+    book: { deltas: [], vwap: 0, totalVolume: 0 }
   },
   action: MarketAction
 ) => {
   switch (action.type) {
     case getType(marketActions.internal.update):
+      let vwap = 0;
+      let totalVolume = 0;
+      for (const md of action.payload) {
+        vwap =
+          (vwap * totalVolume + md.data.price * md.data.volume) / (totalVolume + md.data.volume);
+        totalVolume += md.data.volume;
+      }
+
       return {
         ...state,
         book: {
           ...state.book,
-          deltas: [...state.book.deltas, action.payload.data],
+          deltas: [action.payload[action.payload.length - 1].data],
+          // vwap :
+          //     (state.book.vwap * state.book.totalVolume +
+          //      action.payload.data.price * action.payload.data.volume)
+          //      /
+          //         (state.book.totalVolume +
+          //         action.payload.data.volume),
           vwap:
-            (state.book.vwap * state.book.total_volume +
-              action.payload.data.price * action.payload.data.volume) /
-            (state.book.total_volume + action.payload.data.volume),
-          total_volume: state.book.total_volume + action.payload.data.volume
+            (state.book.vwap * state.book.totalVolume + vwap * totalVolume) /
+            (state.book.totalVolume + totalVolume),
+          // totalVolume :
+          //     state.book.totalVolume + action.payload.data.volume
+          totalVolume: state.book.totalVolume + totalVolume
         }
       };
     default:

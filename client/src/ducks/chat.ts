@@ -2,7 +2,7 @@ import { Reducer } from 'redux';
 import { eventChannel } from 'redux-saga';
 import { all, call, put, take, takeLatest } from 'redux-saga/effects';
 import { ActionType, createAction, getType } from 'typesafe-actions';
-import socket from '../core/socketio';
+import { chatSocket } from '../core/socketio';
 
 interface IMessage {
   sid: string;
@@ -33,11 +33,11 @@ export type ChatAction = ActionType<typeof chatActions>;
 export const chatServices = {
   subscribe: () =>
     eventChannel(emit => {
-      socket.on('message_add', (data: { id: number; message: IMessage }) => {
+      chatSocket.on('add', (data: { id: number; message: IMessage }) => {
         emit(chatActions.internal.messageAdded(data.id, data.message));
       });
 
-      socket.on('message_remove', (data: { id: number; message: IMessage }) => {
+      chatSocket.on('remove', (data: { id: number; message: IMessage }) => {
         emit(chatActions.internal.messageRemoved(data.id, data.message));
       });
 
@@ -54,7 +54,7 @@ export const chatSagas = {
     }
   },
   *sendMessage(action: ReturnType<typeof chatActions.sendMessage>) {
-    yield call([socket, socket.emit], 'message_add', action.payload);
+    yield call([chatSocket, chatSocket.emit], 'add', action.payload);
   }
   // deleteMessage: function*(action: ChatAction) {
   //     while (true) {
@@ -62,7 +62,7 @@ export const chatSagas = {
   //         yield take(
   //             getType(chatActions.deleteMessage)
   //         );
-  //         socket.emit('message_remove', action.payload);
+  //         chatSocket.emit('message_remove', action.payload);
   //     }
   // }
 };
@@ -89,7 +89,6 @@ const reducer: Reducer<ChatState, ChatAction> = (
     case getType(chatActions.internal.messageAdded):
       return {
         ...state,
-
         messages: [...state.messages, action.payload.message]
       };
     case getType(chatActions.internal.messageRemoved):

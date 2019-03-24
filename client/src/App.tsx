@@ -42,7 +42,14 @@ const App: React.FC<AppProps> = props => {
         <input type="text" value={text} onChange={inputHandler} />
         <button onClick={sendHandler}>Send</button>
       </div>
-      <div>{JSON.stringify(props.market)}</div>
+      <div>
+        <p>
+          Last Update ({props.market.book.deltas.length}):{' '}
+          {JSON.stringify(props.market.book.deltas[props.market.book.deltas.length - 1])}
+        </p>
+        <p>VWAP: {props.market.book.vwap}</p>
+        <p>Total Volume: {props.market.book.totalVolume}</p>
+      </div>
     </React.Fragment>
   );
 };

@@ -41,4 +41,4 @@ class Book:
 
 
 def gen_update():
-    return BookUpdate(random.randint(1, 9), random.randint(1, 9)).__dict__
+    return BookUpdate(random.randint(1, 20), random.randint(1, 20)).__dict__

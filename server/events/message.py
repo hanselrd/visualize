@@ -7,11 +7,11 @@ from main import socketio
 _id = 1
 
 
-@socketio.on("message_add")
-def message_add(message):
+@socketio.on("add", namespace="/message")
+def message_on_add(message):
     global _id
     emit(
-        "message_add",
+        "add",
         {
             "id": _id,
             "message": {
@@ -21,5 +21,6 @@ def message_add(message):
             },
         },
         broadcast=True,
+        namespace="/message",
     )
-    id += 1
+    _id += 1
